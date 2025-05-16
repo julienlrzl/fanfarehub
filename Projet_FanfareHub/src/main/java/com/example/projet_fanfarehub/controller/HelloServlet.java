@@ -1,4 +1,4 @@
-package com.example.projet_fanfarehub;
+package com.example.projet_fanfarehub.controller;
 
 import java.io.*;
 

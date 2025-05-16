@@ -1,13 +1,22 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>JSP - Hello World</title>
+    <meta charset="UTF-8">
+    <title>FanfareHub - Accueil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<h1><%= "Hello World!" %>
-</h1>
-<br/>
-<a href="hello-servlet">Hello Servlet</a>
+<body class="d-flex flex-column min-vh-100">
+
+<jsp:include page="components/navbar.jsp"/>
+
+<main class="container my-5">
+    <h1 class="text-center">Bienvenue sur FanfareHub 🎺</h1>
+    <p class="text-center">Plateforme de gestion collaborative des fanfares.</p>
+</main>
+
+<jsp:include page="components/footer.jsp"/>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
