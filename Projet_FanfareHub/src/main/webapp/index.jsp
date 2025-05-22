@@ -9,6 +9,17 @@
 <body class="d-flex flex-column min-vh-100">
 
 <jsp:include page="components/navbar.jsp"/>
+<%
+    String message = (String) session.getAttribute("message");
+    if (message != null) {
+%>
+<div class="alert alert-success text-center" role="alert">
+    <%= message %>
+</div>
+<%
+        session.removeAttribute("message");
+    }
+%>
 
 <main class="container my-5">
     <h1 class="text-center">Bienvenue sur FanfareHub 🎺</h1>
