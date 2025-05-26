@@ -1,79 +1,34 @@
-## Projet Fanfarehub
+## 📦 Installation de la base de données PostgreSQL
 
-### 📌 Installation de la Base de Données PostgreSQL
+### 1. Créer la base de données
 
-Ce guide explique comment installer et configurer la base de données PostgreSQL pour le projet **FanfareHub** à l'aide des fichiers SQL fournis.
-
----
-
-### **1. Prérequis**
-
-Avant de commencer, assurez-vous d'avoir :
-
-- **PostgreSQL** installé sur votre machine.
-- Accès à un terminal.
-- Les fichiers SQL situés dans `src/resources/db/`.
-
----
-
-### **2. Lancer PostgreSQL**
-
-Démarrez le service PostgreSQL si ce n'est pas déjà fait :
+Connectez-vous à PostgreSQL avec votre utilisateur (par défaut `tp_user`), puis créez la base :
 
 ```bash
-brew services start postgresql  # (Mac)
+createdb -U tp_user fanfarehub
 ```
 
-Vérifiez que PostgreSQL fonctionne :
+### 2. Importer les données
+
+Assurez-vous d’être dans le dossier contenant fanfarehub_dump.sql, puis lancez :
 
 ```bash
-psql -U postgres
+psql -U tp_user -d fanfarehub -f fanfarehub_dump.sql
 ```
 
----
-
-### **3. Exécuter les fichiers SQL pour créer la base**
-
-**a- Créer la base de données** :
+Cela va créer toutes les tables (appuser, event, participation, etc.) ainsi que les contraintes et données initiales.  
+Assurez-vous que le fichier ConnexionBD.java contient les bons paramètres de connexion :
 
 ```bash
-psql -U postgres -f src/resources/db/1_create_db.sql
+String url = "jdbc:postgresql://localhost:5432/fanfarehub";
+String user = "tp_user";
+String password = "<ton_mot_de_passe>";
 ```
 
-**b- Créer les tables** :
-
-```bash
-psql -U postgres -d fanfarehub -f src/resources/db/2_create_tables.sql
-```
-
-**c- Insérer les données initiales** :
-
-```bash
-psql -U postgres -d fanfarehub -f src/resources/db/3_insert_data.sql
-```
-
----
-
-### **4. Vérifier l’installation**
-
-Après l’installation, connectez-vous à PostgreSQL :
-
-```bash
-psql -U postgres -d fanfarehub
-```
-
-Puis vérifiez que les tables existent avec :
-
-```sql
-\dt
-```
-
-Et que les données ont été insérées avec :
-
-```sql
-SELECT * FROM "user";
-```
-
-Si les résultats affichent la liste des utilisateurs, l’installation est **réussie**.
-
----
+Pour se connecter voici les utilisateurs existants :  
+User n°1 :  
+ - Username : julienlrzl@gmail.com  
+ - Password : Habere13  
+User n°2 :  
+ - Username : admin@site.com  
+ - Password : adminpass

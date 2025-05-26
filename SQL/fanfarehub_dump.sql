@@ -1,0 +1,369 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.17 (Homebrew)
+-- Dumped by pg_dump version 14.17 (Homebrew)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: appuser; Type: TABLE; Schema: public; Owner: tp_user
+--
+
+CREATE TABLE public.appuser (
+    userid character varying(50) NOT NULL,
+    email character varying(100) NOT NULL,
+    passwordhash character varying(255) NOT NULL,
+    firstname character varying(50),
+    lastname character varying(50),
+    gender character varying(10),
+    dietaryrestriction character varying(20),
+    creationdate timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    lastlogin timestamp without time zone,
+    isadmin boolean DEFAULT false,
+    CONSTRAINT appuser_dietaryrestriction_check CHECK (((dietaryrestriction)::text = ANY ((ARRAY['none'::character varying, 'vegetarian'::character varying, 'vegan'::character varying, 'pork-free'::character varying])::text[]))),
+    CONSTRAINT appuser_gender_check CHECK (((gender)::text = ANY ((ARRAY['male'::character varying, 'female'::character varying, 'other'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.appuser OWNER TO tp_user;
+
+--
+-- Name: belongstogroup; Type: TABLE; Schema: public; Owner: tp_user
+--
+
+CREATE TABLE public.belongstogroup (
+    userid character varying(50) NOT NULL,
+    groupname character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.belongstogroup OWNER TO tp_user;
+
+--
+-- Name: event; Type: TABLE; Schema: public; Owner: tp_user
+--
+
+CREATE TABLE public.event (
+    eventid integer NOT NULL,
+    eventname character varying(100) NOT NULL,
+    datetime timestamp without time zone NOT NULL,
+    duration integer,
+    location character varying(100),
+    description text,
+    userid character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.event OWNER TO tp_user;
+
+--
+-- Name: event_eventid_seq; Type: SEQUENCE; Schema: public; Owner: tp_user
+--
+
+CREATE SEQUENCE public.event_eventid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.event_eventid_seq OWNER TO tp_user;
+
+--
+-- Name: event_eventid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: tp_user
+--
+
+ALTER SEQUENCE public.event_eventid_seq OWNED BY public.event.eventid;
+
+
+--
+-- Name: instrumentsection; Type: TABLE; Schema: public; Owner: tp_user
+--
+
+CREATE TABLE public.instrumentsection (
+    sectionname character varying(100) NOT NULL,
+    CONSTRAINT instrumentsection_sectionname_check CHECK (((sectionname)::text = ANY ((ARRAY['clarinette'::character varying, 'saxophone_alto'::character varying, 'euphonium'::character varying, 'percussion'::character varying, 'basse'::character varying, 'trompette'::character varying, 'saxophone_baryton'::character varying, 'trombone'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.instrumentsection OWNER TO tp_user;
+
+--
+-- Name: participation; Type: TABLE; Schema: public; Owner: tp_user
+--
+
+CREATE TABLE public.participation (
+    userid character varying(50) NOT NULL,
+    eventid integer NOT NULL,
+    sectionname character varying(100) NOT NULL,
+    status character varying(10),
+    CONSTRAINT participation_status_check CHECK (((status)::text = ANY ((ARRAY['present'::character varying, 'absent'::character varying, 'uncertain'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.participation OWNER TO tp_user;
+
+--
+-- Name: playsinsection; Type: TABLE; Schema: public; Owner: tp_user
+--
+
+CREATE TABLE public.playsinsection (
+    userid character varying(50) NOT NULL,
+    sectionname character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.playsinsection OWNER TO tp_user;
+
+--
+-- Name: usergroup; Type: TABLE; Schema: public; Owner: tp_user
+--
+
+CREATE TABLE public.usergroup (
+    groupname character varying(100) NOT NULL,
+    CONSTRAINT usergroup_groupname_check CHECK (((groupname)::text = ANY ((ARRAY['commission_prestation'::character varying, 'commission_artistique'::character varying, 'commission_logistique'::character varying, 'commission_communication_interne'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.usergroup OWNER TO tp_user;
+
+--
+-- Name: event eventid; Type: DEFAULT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.event ALTER COLUMN eventid SET DEFAULT nextval('public.event_eventid_seq'::regclass);
+
+
+--
+-- Data for Name: appuser; Type: TABLE DATA; Schema: public; Owner: tp_user
+--
+
+COPY public.appuser (userid, email, passwordhash, firstname, lastname, gender, dietaryrestriction, creationdate, lastlogin, isadmin) FROM stdin;
+admin123	admin@site.com	adminpass	Admin	Test	male	none	2025-05-22 10:59:37.909655	\N	t
+24104ef6-8033-4ff3-8617-c5df15856eee	julienlrzl@gmail.com	Habere13	Julien	Larzul	male	vegan	2025-05-22 00:00:00	\N	f
+\.
+
+
+--
+-- Data for Name: belongstogroup; Type: TABLE DATA; Schema: public; Owner: tp_user
+--
+
+COPY public.belongstogroup (userid, groupname) FROM stdin;
+admin123	commission_prestation
+24104ef6-8033-4ff3-8617-c5df15856eee	commission_prestation
+24104ef6-8033-4ff3-8617-c5df15856eee	commission_artistique
+\.
+
+
+--
+-- Data for Name: event; Type: TABLE DATA; Schema: public; Owner: tp_user
+--
+
+COPY public.event (eventid, eventname, datetime, duration, location, description, userid) FROM stdin;
+2	Évènement_1	2025-08-25 18:00:00	90	Lyon	Concert	24104ef6-8033-4ff3-8617-c5df15856eee
+\.
+
+
+--
+-- Data for Name: instrumentsection; Type: TABLE DATA; Schema: public; Owner: tp_user
+--
+
+COPY public.instrumentsection (sectionname) FROM stdin;
+clarinette
+saxophone_alto
+euphonium
+percussion
+basse
+trompette
+saxophone_baryton
+trombone
+\.
+
+
+--
+-- Data for Name: participation; Type: TABLE DATA; Schema: public; Owner: tp_user
+--
+
+COPY public.participation (userid, eventid, sectionname, status) FROM stdin;
+24104ef6-8033-4ff3-8617-c5df15856eee	2	saxophone_alto	present
+admin123	2	clarinette	present
+\.
+
+
+--
+-- Data for Name: playsinsection; Type: TABLE DATA; Schema: public; Owner: tp_user
+--
+
+COPY public.playsinsection (userid, sectionname) FROM stdin;
+24104ef6-8033-4ff3-8617-c5df15856eee	trompette
+\.
+
+
+--
+-- Data for Name: usergroup; Type: TABLE DATA; Schema: public; Owner: tp_user
+--
+
+COPY public.usergroup (groupname) FROM stdin;
+commission_prestation
+commission_artistique
+commission_logistique
+commission_communication_interne
+\.
+
+
+--
+-- Name: event_eventid_seq; Type: SEQUENCE SET; Schema: public; Owner: tp_user
+--
+
+SELECT pg_catalog.setval('public.event_eventid_seq', 2, true);
+
+
+--
+-- Name: appuser appuser_email_key; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.appuser
+    ADD CONSTRAINT appuser_email_key UNIQUE (email);
+
+
+--
+-- Name: appuser appuser_pkey; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.appuser
+    ADD CONSTRAINT appuser_pkey PRIMARY KEY (userid);
+
+
+--
+-- Name: belongstogroup belongstogroup_pkey; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.belongstogroup
+    ADD CONSTRAINT belongstogroup_pkey PRIMARY KEY (userid, groupname);
+
+
+--
+-- Name: event event_pkey; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.event
+    ADD CONSTRAINT event_pkey PRIMARY KEY (eventid);
+
+
+--
+-- Name: instrumentsection instrumentsection_pkey; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.instrumentsection
+    ADD CONSTRAINT instrumentsection_pkey PRIMARY KEY (sectionname);
+
+
+--
+-- Name: participation participation_pkey; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.participation
+    ADD CONSTRAINT participation_pkey PRIMARY KEY (userid, eventid, sectionname);
+
+
+--
+-- Name: playsinsection playsinsection_pkey; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.playsinsection
+    ADD CONSTRAINT playsinsection_pkey PRIMARY KEY (userid, sectionname);
+
+
+--
+-- Name: usergroup usergroup_pkey; Type: CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.usergroup
+    ADD CONSTRAINT usergroup_pkey PRIMARY KEY (groupname);
+
+
+--
+-- Name: belongstogroup belongstogroup_groupname_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.belongstogroup
+    ADD CONSTRAINT belongstogroup_groupname_fkey FOREIGN KEY (groupname) REFERENCES public.usergroup(groupname);
+
+
+--
+-- Name: belongstogroup belongstogroup_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.belongstogroup
+    ADD CONSTRAINT belongstogroup_userid_fkey FOREIGN KEY (userid) REFERENCES public.appuser(userid);
+
+
+--
+-- Name: event event_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.event
+    ADD CONSTRAINT event_userid_fkey FOREIGN KEY (userid) REFERENCES public.appuser(userid);
+
+
+--
+-- Name: participation participation_eventid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.participation
+    ADD CONSTRAINT participation_eventid_fkey FOREIGN KEY (eventid) REFERENCES public.event(eventid);
+
+
+--
+-- Name: participation participation_sectionname_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.participation
+    ADD CONSTRAINT participation_sectionname_fkey FOREIGN KEY (sectionname) REFERENCES public.instrumentsection(sectionname);
+
+
+--
+-- Name: participation participation_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.participation
+    ADD CONSTRAINT participation_userid_fkey FOREIGN KEY (userid) REFERENCES public.appuser(userid);
+
+
+--
+-- Name: playsinsection playsinsection_sectionname_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.playsinsection
+    ADD CONSTRAINT playsinsection_sectionname_fkey FOREIGN KEY (sectionname) REFERENCES public.instrumentsection(sectionname);
+
+
+--
+-- Name: playsinsection playsinsection_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tp_user
+--
+
+ALTER TABLE ONLY public.playsinsection
+    ADD CONSTRAINT playsinsection_userid_fkey FOREIGN KEY (userid) REFERENCES public.appuser(userid);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
