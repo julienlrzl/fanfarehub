@@ -1,3 +1,4 @@
+
 package com.example.projet_fanfarehub.controller;
 
 import com.example.projet_fanfarehub.dao.GroupDAO;
@@ -6,10 +7,7 @@ import com.example.projet_fanfarehub.model.Utilisateur;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
@@ -29,9 +27,20 @@ public class ProfilServlet extends HttpServlet {
 
         String[] sections = request.getParameterValues("sections");
         String[] groupes = request.getParameterValues("groupes");
+        String nouveauGroupe = request.getParameter("nouveauGroupe");
+        String supprimerGroupe = request.getParameter("supprimerGroupe");
 
         InstrumentSectionDAO sectionDAO = new InstrumentSectionDAO();
         GroupDAO groupDAO = new GroupDAO();
+
+        if (utilisateur.isAdmin()) {
+            if (nouveauGroupe != null && !nouveauGroupe.trim().isEmpty()) {
+                groupDAO.ajouterGroupe(nouveauGroupe.trim().toLowerCase());
+            }
+            if (supprimerGroupe != null && !supprimerGroupe.trim().isEmpty()) {
+                groupDAO.supprimerGroupe(supprimerGroupe.trim().toLowerCase());
+            }
+        }
 
         sectionDAO.mettreAJourPupitres(utilisateur.getEmail(), sections);
         groupDAO.mettreAJourGroupes(utilisateur.getEmail(), groupes);

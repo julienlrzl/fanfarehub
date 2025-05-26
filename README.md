@@ -26,9 +26,13 @@ String password = "<ton_mot_de_passe>";
 ```
 
 Pour se connecter voici les utilisateurs existants :  
-User n°1 :  
- - Username : julienlrzl@gmail.com  
- - Password : Habere13  
-User n°2 :  
- - Username : admin@site.com  
- - Password : adminpass
+User n°1 :
+
+- Username : julienlrzl@icloud.com
+- Password : test
+  User n°2 (Admin):
+- Username : admin@site.com
+- Password : adminpass  
+  User n°3 :
+- Username : victor.lefevre@gmail.com
+- Password : test

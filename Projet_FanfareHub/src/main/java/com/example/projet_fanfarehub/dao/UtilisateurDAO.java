@@ -2,6 +2,7 @@ package com.example.projet_fanfarehub.dao;
 
 import com.example.projet_fanfarehub.model.Utilisateur;
 import com.example.projet_fanfarehub.util.ConnexionBD;
+import com.example.projet_fanfarehub.util.PasswordUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,11 +23,16 @@ public class UtilisateurDAO {
 
             stmt.setString(1, generatedId);
             stmt.setString(2, utilisateur.getEmail());
-            stmt.setString(3, utilisateur.getMotDePasse()); // tu peux hasher plus tard
+
+            // Hachage du mot de passe AVANT insertion
+            String hashedPassword = PasswordUtil.hash(utilisateur.getMotDePasse());
+            stmt.setString(3, hashedPassword);
+
             stmt.setString(4, utilisateur.getPrenom());
             stmt.setString(5, utilisateur.getNom());
             stmt.setString(6, utilisateur.getGenre());
             stmt.setString(7, utilisateur.getAlimentaire());
+
             System.out.println("Tentative d'ajout : " + utilisateur.getEmail());
             stmt.executeUpdate();
 
@@ -43,7 +49,10 @@ public class UtilisateurDAO {
              PreparedStatement stmt = connexion.prepareStatement(sql)) {
 
             stmt.setString(1, email);
-            stmt.setString(2, mdp);
+
+            // Hachage du mot de passe AVANT la recherche
+            String hashed = PasswordUtil.hash(mdp);
+            stmt.setString(2, hashed);
 
             ResultSet rs = stmt.executeQuery();
 
@@ -95,11 +104,52 @@ public class UtilisateurDAO {
     }
 
     public void supprimerParEmail(String email) {
-        String sql = "DELETE FROM appuser WHERE email = ?";
-        try (Connection conn = ConnexionBD.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, email);
-            stmt.executeUpdate();
+        String getIdSql = "SELECT userid FROM appuser WHERE email = ?";
+        String deleteParticipation = "DELETE FROM participation WHERE userid = ?";
+        String deleteBelongsToGroup = "DELETE FROM belongstogroup WHERE userid = ?";
+        String deletePlaysInSection = "DELETE FROM playsinsection WHERE userid = ?";
+        String deleteEvents = "DELETE FROM event WHERE userid = ?";
+        String deleteUser = "DELETE FROM appuser WHERE email = ?";
+
+        try (Connection conn = ConnexionBD.getConnexion()) {
+
+            // Récupérer l'ID utilisateur à partir de l'email
+            PreparedStatement getIdStmt = conn.prepareStatement(getIdSql);
+            getIdStmt.setString(1, email);
+            ResultSet rs = getIdStmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("Aucun utilisateur trouvé avec l'email : " + email);
+                return;
+            }
+
+            String userId = rs.getString("userid");
+
+            // Supprimer les dépendances dans l'ordre
+            try (PreparedStatement ps1 = conn.prepareStatement(deleteParticipation);
+                 PreparedStatement ps2 = conn.prepareStatement(deleteBelongsToGroup);
+                 PreparedStatement ps3 = conn.prepareStatement(deletePlaysInSection);
+                 PreparedStatement ps4 = conn.prepareStatement(deleteEvents);
+                 PreparedStatement deleteUserStmt = conn.prepareStatement(deleteUser)) {
+
+                ps1.setString(1, userId);
+                ps1.executeUpdate();
+
+                ps2.setString(1, userId);
+                ps2.executeUpdate();
+
+                ps3.setString(1, userId);
+                ps3.executeUpdate();
+
+                ps4.setString(1, userId);
+                ps4.executeUpdate();
+
+                deleteUserStmt.setString(1, email);
+                deleteUserStmt.executeUpdate();
+
+                System.out.println("Utilisateur et dépendances supprimés : " + email);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package com.example.projet_fanfarehub.controller;
 
 import com.example.projet_fanfarehub.dao.UtilisateurDAO;
 import com.example.projet_fanfarehub.model.Utilisateur;
+import com.example.projet_fanfarehub.util.PasswordUtil;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,19 +24,22 @@ public class InscriptionServlet extends HttpServlet {
         String genre = request.getParameter("genre");
         String alimentaire = request.getParameter("alimentaire");
 
-        // Vérification de base
+        // Vérification
         if (!email.equals(emailConfirm) || !mdp.equals(mdpConfirm)) {
             request.setAttribute("erreur", "Les emails ou mots de passe ne correspondent pas.");
             request.getRequestDispatcher("inscription.jsp").forward(request, response);
             return;
         }
 
-        // Création et insertion de l'utilisateur
-        Utilisateur utilisateur = new Utilisateur(email, mdp, prenom, nom, genre, alimentaire);
+        // Hachage du mot de passe
+        String hashedPassword = PasswordUtil.hash(mdp);
+
+        // Insertion
+        Utilisateur utilisateur = new Utilisateur(email, hashedPassword, prenom, nom, genre, alimentaire);
         UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
         utilisateurDAO.ajouter(utilisateur);
 
-        // Connexion automatique
+        // Connexion
         HttpSession session = request.getSession();
         session.setAttribute("utilisateur", utilisateur);
         session.setAttribute("message", "Inscription réussie ! Bienvenue sur FanfareHub");

@@ -9,8 +9,8 @@
 
   InstrumentSectionDAO sectionDAO = new InstrumentSectionDAO();
   GroupDAO groupDAO = new GroupDAO();
-  List<String> sections = sectionDAO.getAllSections(); // ex: ["Clarinette", ...]
-  List<String> groupes = groupDAO.getAllGroups(); // ex: ["Logistique", ...]
+  List<String> sections = sectionDAO.getAllSections();
+  List<String> groupes = groupDAO.getAllGroups();
 
   List<String> sectionsUser = sectionDAO.getSectionsByEmail(utilisateur.getEmail());
   List<String> groupesUser = groupDAO.getGroupsByEmail(utilisateur.getEmail());
@@ -28,6 +28,7 @@
 <main class="container my-5">
   <h1 class="mb-4">Mon profil</h1>
 
+  <!-- FORMULAIRE DE BASE -->
   <form method="post" action="profil">
     <h4>Pupitres</h4>
     <div class="mb-3">
@@ -59,7 +60,31 @@
       <% } %>
     </div>
 
-    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    <!-- SI ADMIN, AJOUTER UN GROUPE -->
+    <% if (utilisateur.isAdmin()) { %>
+    <div class="mb-3 mt-4">
+      <h5>Ajouter un nouveau groupe</h5>
+      <div class="input-group">
+        <input type="text" name="nouveauGroupe" class="form-control" placeholder="Nom du groupe à ajouter">
+        <button class="btn btn-outline-success" type="submit">Ajouter</button>
+      </div>
+    </div>
+
+    <div class="mb-3 mt-4">
+      <h5>Supprimer un groupe</h5>
+      <div class="input-group">
+        <select name="supprimerGroupe" class="form-select">
+          <option value="">-- Sélectionner un groupe --</option>
+          <% for (String g : groupes) { %>
+          <option value="<%= g %>"><%= g.replace("_", " ") %></option>
+          <% } %>
+        </select>
+        <button class="btn btn-outline-danger" type="submit">Supprimer</button>
+      </div>
+    </div>
+    <% } %>
+
+    <button type="submit" class="btn btn-primary mt-3">Mettre à jour</button>
   </form>
 </main>
 

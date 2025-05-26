@@ -2,6 +2,7 @@ package com.example.projet_fanfarehub.controller;
 
 import com.example.projet_fanfarehub.dao.UtilisateurDAO;
 import com.example.projet_fanfarehub.model.Utilisateur;
+import com.example.projet_fanfarehub.util.PasswordUtil;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,8 +18,11 @@ public class ConnexionServlet extends HttpServlet {
         String email = request.getParameter("email");
         String mdp = request.getParameter("mdp");
 
+        // Hachage du mot de passe avant vérification
+        String hashedPassword = PasswordUtil.hash(mdp);
+
         UtilisateurDAO dao = new UtilisateurDAO();
-        Utilisateur utilisateur = dao.trouverParEmailEtMotDePasse(email, mdp);
+        Utilisateur utilisateur = dao.trouverParEmailEtMotDePasse(email, hashedPassword);
 
         if (utilisateur != null) {
             HttpSession session = request.getSession();
