@@ -137,8 +137,7 @@ ALTER TABLE public.playsinsection OWNER TO tp_user;
 --
 
 CREATE TABLE public.usergroup (
-    groupname character varying(100) NOT NULL,
-    CONSTRAINT usergroup_groupname_check CHECK (((groupname)::text = ANY ((ARRAY['commission_prestation'::character varying, 'commission_artistique'::character varying, 'commission_logistique'::character varying, 'commission_communication_interne'::character varying])::text[])))
+    groupname character varying(100) NOT NULL
 );
 
 
@@ -156,8 +155,9 @@ ALTER TABLE ONLY public.event ALTER COLUMN eventid SET DEFAULT nextval('public.e
 --
 
 COPY public.appuser (userid, email, passwordhash, firstname, lastname, gender, dietaryrestriction, creationdate, lastlogin, isadmin) FROM stdin;
-admin123	admin@site.com	adminpass	Admin	Test	male	none	2025-05-22 10:59:37.909655	\N	t
-24104ef6-8033-4ff3-8617-c5df15856eee	julienlrzl@gmail.com	Habere13	Julien	Larzul	male	vegan	2025-05-22 00:00:00	\N	f
+9a4e193a-5ae6-4732-af8c-3ff335278473	admin@site.com	2af817533d66900fade12831c1764ab1f358732f4c8bfe52e05bdeca6210e458	admin1	admin2	other	pork-free	2025-05-26 00:00:00	\N	t
+7424ae7c-f0c7-468b-a07b-916ff3708134	julienlrzl@icloud.com	7b3d979ca8330a94fa7e9e1b466d8b99e0bcdea1ec90596c0dcc8d7ef6b4300c	Julien2	Larzul2	male	vegan	2025-05-26 00:00:00	\N	f
+a0e7dce0-24a9-46ba-a1ea-6d9c9167b667	victor.lefevre@gmail.com	7b3d979ca8330a94fa7e9e1b466d8b99e0bcdea1ec90596c0dcc8d7ef6b4300c	Victor	Lefevre	male	vegan	2025-05-26 00:00:00	\N	f
 \.
 
 
@@ -166,9 +166,8 @@ admin123	admin@site.com	adminpass	Admin	Test	male	none	2025-05-22 10:59:37.90965
 --
 
 COPY public.belongstogroup (userid, groupname) FROM stdin;
-admin123	commission_prestation
-24104ef6-8033-4ff3-8617-c5df15856eee	commission_prestation
-24104ef6-8033-4ff3-8617-c5df15856eee	commission_artistique
+a0e7dce0-24a9-46ba-a1ea-6d9c9167b667	commission_prestation
+7424ae7c-f0c7-468b-a07b-916ff3708134	commission_prestation
 \.
 
 
@@ -177,7 +176,7 @@ admin123	commission_prestation
 --
 
 COPY public.event (eventid, eventname, datetime, duration, location, description, userid) FROM stdin;
-2	Évènement_1	2025-08-25 18:00:00	90	Lyon	Concert	24104ef6-8033-4ff3-8617-c5df15856eee
+3	Victor en folie	2026-08-25 18:00:00	90	Martinique		a0e7dce0-24a9-46ba-a1ea-6d9c9167b667
 \.
 
 
@@ -202,8 +201,7 @@ trombone
 --
 
 COPY public.participation (userid, eventid, sectionname, status) FROM stdin;
-24104ef6-8033-4ff3-8617-c5df15856eee	2	saxophone_alto	present
-admin123	2	clarinette	present
+7424ae7c-f0c7-468b-a07b-916ff3708134	3	saxophone_baryton	present
 \.
 
 
@@ -212,7 +210,9 @@ admin123	2	clarinette	present
 --
 
 COPY public.playsinsection (userid, sectionname) FROM stdin;
-24104ef6-8033-4ff3-8617-c5df15856eee	trompette
+a0e7dce0-24a9-46ba-a1ea-6d9c9167b667	percussion
+7424ae7c-f0c7-468b-a07b-916ff3708134	trompette
+7424ae7c-f0c7-468b-a07b-916ff3708134	saxophone_baryton
 \.
 
 
@@ -232,7 +232,7 @@ commission_communication_interne
 -- Name: event_eventid_seq; Type: SEQUENCE SET; Schema: public; Owner: tp_user
 --
 
-SELECT pg_catalog.setval('public.event_eventid_seq', 2, true);
+SELECT pg_catalog.setval('public.event_eventid_seq', 3, true);
 
 
 --
