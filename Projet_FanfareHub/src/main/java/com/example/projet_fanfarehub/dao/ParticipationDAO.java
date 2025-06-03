@@ -112,4 +112,23 @@ public class ParticipationDAO {
 
         return result;
     }
+
+    public void supprimerParticipation(String email, int eventId) {
+        try (Connection conn = ConnexionBD.getConnexion()) {
+            String userId = getUserIdByEmail(email, conn);
+            if (userId == null) {
+                System.out.println("Aucun utilisateur trouvé pour l'email : " + email);
+                return;
+            }
+
+            PreparedStatement delete = conn.prepareStatement(
+                    "DELETE FROM participation WHERE userid = ? AND eventid = ?");
+            delete.setString(1, userId);
+            delete.setInt(2, eventId);
+            delete.executeUpdate();
+            System.out.println("Participation supprimée pour " + email);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="com.example.projet_fanfarehub.model.Utilisateur" %>
 <%@ page import="com.example.projet_fanfarehub.dao.GroupDAO" %>
+<%@ page import="com.example.projet_fanfarehub.util.HtmlUtils" %> <!-- Ajout de l'import pour HtmlUtils -->
 <%@ page import="java.util.List" %>
 
 <%
@@ -24,10 +25,10 @@
       <ul class="navbar-nav ms-auto">
 
         <% if (utilisateur != null) { %>
-        <!-- Affiche prénom -->
+        <!-- Affiche prénom avec protection XSS -->
         <li class="nav-item">
           <a class="nav-link disabled text-white" href="#">
-            Bienvenue, <strong><%= utilisateur.getPrenom() %></strong>
+            Bienvenue, <strong><%= HtmlUtils.cleanInput(utilisateur.getPrenom()) %></strong>
           </a>
         </li>
         <% } %>
@@ -47,7 +48,6 @@
           <a class="nav-link" href="events">Événements</a>
         </li>
         <% } %>
-
 
         <% if (utilisateur == null) { %>
         <li class="nav-item">

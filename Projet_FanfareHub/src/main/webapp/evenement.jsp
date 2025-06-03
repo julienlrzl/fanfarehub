@@ -74,14 +74,21 @@
     <div class="col-md-4">
       <div class="card mb-3">
         <div class="card-header bg-light">
-          <strong>
-            <%= statut.equals("present") ? "Présents" :
-                    (statut.equals("absent") ? "Absents" : "Incertains") %>
-          </strong>
+          <strong><%= statut.equals("present") ? "Présents" :
+                  (statut.equals("absent") ? "Absents" : "Incertains") %></strong>
         </div>
         <ul class="list-group list-group-flush">
           <% for (String nom : statutMap.get(statut)) { %>
-          <li class="list-group-item"><%= nom %></li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <%= nom %>
+            <% if ((utilisateur.getPrenom() + " " + utilisateur.getNom()).equals(nom)) { %>
+            <form method="post" action="evenement" class="d-inline">
+              <input type="hidden" name="eventid" value="<%= event.getId() %>">
+              <input type="hidden" name="action" value="desinscrire">
+              <button class="btn btn-outline-danger btn-sm">Se désinscrire</button>
+            </form>
+            <% } %>
+          </li>
           <% } %>
         </ul>
       </div>

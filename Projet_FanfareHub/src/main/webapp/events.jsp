@@ -1,4 +1,5 @@
 <%@ page import="java.util.List, java.text.SimpleDateFormat, com.example.projet_fanfarehub.model.Event, com.example.projet_fanfarehub.model.Utilisateur, com.example.projet_fanfarehub.dao.GroupDAO" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
   List<Event> events = (List<Event>) request.getAttribute("events");
@@ -9,6 +10,8 @@
   GroupDAO groupDAO = new GroupDAO();
   List<String> groupes = groupDAO.getGroupsByEmail(utilisateur.getEmail());
   boolean estPrestation = groupes.contains("commission_prestation");
+  Map<Integer, String> mesInstruments = (Map<Integer, String>) request.getAttribute("mesInstruments");
+  Map<Integer, String> mesStatuts = (Map<Integer, String>) request.getAttribute("mesStatuts");
 %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -65,6 +68,8 @@
       <th>Durée</th>
       <th>Lieu</th>
       <th>Description</th>
+      <th>Mon instrument</th>
+      <th>Mon statut</th>
       <th>Actions</th>
     </tr>
     </thead>
@@ -77,6 +82,15 @@
       <td><%= e.getDuree() %> min</td>
       <td><%= e.getLieu() %></td>
       <td><%= e.getDescription() %></td>
+      <td>
+        <%= (mesInstruments != null && mesInstruments.get(e.getId()) != null)
+                ? mesInstruments.get(e.getId()) : "" %>
+      </td>
+
+      <td>
+        <%= (mesStatuts != null && mesStatuts.get(e.getId()) != null)
+                ? mesStatuts.get(e.getId()) : "" %>
+      </td>
       <td>
         <% if (estPrestation) { %>
         <form method="post" action="events" class="d-inline">
@@ -93,9 +107,11 @@
         <a href="evenement?id=<%= e.getId() %>" class="btn btn-outline-info btn-sm">Participer</a>
       </td>
     </tr>
-    <%  }
+    <%   }
     } else { %>
-    <tr><td colspan="6" class="text-center text-muted">Aucun événement trouvé.</td></tr>
+    <tr>
+      <td colspan="8" class="text-center text-muted">Aucun événement trouvé.</td>
+    </tr>
     <% } %>
     </tbody>
   </table>

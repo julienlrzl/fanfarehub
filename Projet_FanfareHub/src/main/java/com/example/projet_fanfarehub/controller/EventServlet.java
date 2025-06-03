@@ -2,6 +2,7 @@ package com.example.projet_fanfarehub.controller;
 
 import com.example.projet_fanfarehub.dao.EventDAO;
 import com.example.projet_fanfarehub.dao.GroupDAO;
+import com.example.projet_fanfarehub.dao.ParticipationDAO;
 import com.example.projet_fanfarehub.model.Event;
 import com.example.projet_fanfarehub.model.Utilisateur;
 
@@ -12,7 +13,9 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/events")
 public class EventServlet extends HttpServlet {
@@ -32,11 +35,25 @@ public class EventServlet extends HttpServlet {
             return;
         }
 
-        // Pas de restriction ici → tout fanfaron connecté peut accéder
         List<Event> events = dao.getTousLesEvenements();
-        req.setAttribute("events", events);
 
-        // Préparation du formulaire si on veut modifier (réservé à ceux qui voient le bouton dans la JSP)
+        // Récupération des instruments et statuts de l’utilisateur connecté pour chaque événement
+        ParticipationDAO participationDAO = new ParticipationDAO();
+        Map<Integer, String> mesInstruments = new HashMap<>();
+        Map<Integer, String> mesStatuts = new HashMap<>();
+
+        for (Event e : events) {
+            String instrument = participationDAO.getInstrument(utilisateur.getEmail(), e.getId());
+            String statut = participationDAO.getStatut(utilisateur.getEmail(), e.getId());
+            mesInstruments.put(e.getId(), instrument != null ? instrument : "");
+            mesStatuts.put(e.getId(), statut != null ? statut : "");
+        }
+
+        req.setAttribute("events", events);
+        req.setAttribute("mesInstruments", mesInstruments);
+        req.setAttribute("mesStatuts", mesStatuts);
+
+        // Préparation du formulaire si on veut modifier
         String action = req.getParameter("action");
         if ("editForm".equals(action)) {
             int eventId = Integer.parseInt(req.getParameter("eventid"));

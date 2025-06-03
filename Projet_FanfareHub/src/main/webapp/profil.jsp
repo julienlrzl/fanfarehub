@@ -44,6 +44,33 @@
       </div>
       <% } %>
     </div>
+    <% if (utilisateur.isAdmin()) { %>
+    <!-- Gestion des pupitres par l'admin -->
+    <div class="mb-3 mt-4">
+      <h5>Ajouter un nouveau pupitre</h5>
+      <div class="input-group">
+        <input type="text" name="nouveauPupitre" class="form-control" placeholder="Nom du pupitre à ajouter">
+        <button class="btn btn-outline-success" type="submit">Ajouter</button>
+      </div>
+    </div>
+
+    <div class="mb-3 mt-4">
+      <h5>Supprimer un pupitre</h5>
+      <div class="input-group">
+        <select name="supprimerPupitre" class="form-select">
+          <option value="">-- Sélectionner un pupitre --</option>
+          <% for (String s : sections) { %>
+          <option value="<%= s %>"><%= s.replace("_", " ") %></option>
+          <% } %>
+        </select>
+        <button class="btn btn-outline-danger" type="submit">Supprimer</button>
+      </div>
+    </div>
+    <% } %>
+
+
+
+
 
     <h4>Groupes</h4>
     <div class="mb-3">

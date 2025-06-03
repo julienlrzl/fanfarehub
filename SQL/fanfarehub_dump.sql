@@ -98,8 +98,7 @@ ALTER SEQUENCE public.event_eventid_seq OWNED BY public.event.eventid;
 --
 
 CREATE TABLE public.instrumentsection (
-    sectionname character varying(100) NOT NULL,
-    CONSTRAINT instrumentsection_sectionname_check CHECK (((sectionname)::text = ANY ((ARRAY['clarinette'::character varying, 'saxophone_alto'::character varying, 'euphonium'::character varying, 'percussion'::character varying, 'basse'::character varying, 'trompette'::character varying, 'saxophone_baryton'::character varying, 'trombone'::character varying])::text[])))
+    sectionname character varying(100) NOT NULL
 );
 
 
@@ -158,6 +157,7 @@ COPY public.appuser (userid, email, passwordhash, firstname, lastname, gender, d
 9a4e193a-5ae6-4732-af8c-3ff335278473	admin@site.com	2af817533d66900fade12831c1764ab1f358732f4c8bfe52e05bdeca6210e458	admin1	admin2	other	pork-free	2025-05-26 00:00:00	\N	t
 7424ae7c-f0c7-468b-a07b-916ff3708134	julienlrzl@icloud.com	7b3d979ca8330a94fa7e9e1b466d8b99e0bcdea1ec90596c0dcc8d7ef6b4300c	Julien2	Larzul2	male	vegan	2025-05-26 00:00:00	\N	f
 a0e7dce0-24a9-46ba-a1ea-6d9c9167b667	victor.lefevre@gmail.com	7b3d979ca8330a94fa7e9e1b466d8b99e0bcdea1ec90596c0dcc8d7ef6b4300c	Victor	Lefevre	male	vegan	2025-05-26 00:00:00	\N	f
+4458aa58-6b18-44d5-83d6-863724b74ec3	test@test.com	7b3d979ca8330a94fa7e9e1b466d8b99e0bcdea1ec90596c0dcc8d7ef6b4300c	<script>alert('XSS')</script>	test	male	pork-free	2025-06-03 00:00:00	\N	f
 \.
 
 
@@ -168,6 +168,7 @@ a0e7dce0-24a9-46ba-a1ea-6d9c9167b667	victor.lefevre@gmail.com	7b3d979ca8330a94fa
 COPY public.belongstogroup (userid, groupname) FROM stdin;
 a0e7dce0-24a9-46ba-a1ea-6d9c9167b667	commission_prestation
 7424ae7c-f0c7-468b-a07b-916ff3708134	commission_prestation
+9a4e193a-5ae6-4732-af8c-3ff335278473	commission_prestation
 \.
 
 
@@ -201,7 +202,8 @@ trombone
 --
 
 COPY public.participation (userid, eventid, sectionname, status) FROM stdin;
-7424ae7c-f0c7-468b-a07b-916ff3708134	3	saxophone_baryton	present
+7424ae7c-f0c7-468b-a07b-916ff3708134	3	basse	present
+9a4e193a-5ae6-4732-af8c-3ff335278473	3	euphonium	absent
 \.
 
 

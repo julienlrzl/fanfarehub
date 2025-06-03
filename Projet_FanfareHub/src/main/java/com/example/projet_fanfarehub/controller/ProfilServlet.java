@@ -29,6 +29,8 @@ public class ProfilServlet extends HttpServlet {
         String[] groupes = request.getParameterValues("groupes");
         String nouveauGroupe = request.getParameter("nouveauGroupe");
         String supprimerGroupe = request.getParameter("supprimerGroupe");
+        String nouveauPupitre = request.getParameter("nouveauPupitre");
+        String supprimerPupitre = request.getParameter("supprimerPupitre");
 
         InstrumentSectionDAO sectionDAO = new InstrumentSectionDAO();
         GroupDAO groupDAO = new GroupDAO();
@@ -39,6 +41,12 @@ public class ProfilServlet extends HttpServlet {
             }
             if (supprimerGroupe != null && !supprimerGroupe.trim().isEmpty()) {
                 groupDAO.supprimerGroupe(supprimerGroupe.trim().toLowerCase());
+            }
+            if (nouveauPupitre != null && !nouveauPupitre.trim().isEmpty()) {
+                sectionDAO.ajouterPupitre(nouveauPupitre.trim().toLowerCase());
+            }
+            if (supprimerPupitre != null && !supprimerPupitre.trim().isEmpty()) {
+                sectionDAO.supprimerPupitre(supprimerPupitre.trim().toLowerCase());
             }
         }
 

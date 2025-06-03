@@ -59,11 +59,17 @@ public class EvenementServlet extends HttpServlet {
 
         try {
             int eventId = Integer.parseInt(req.getParameter("eventid"));
-            String instrument = req.getParameter("instrument");
-            String statut = req.getParameter("statut");
+            String action = req.getParameter("action");
 
-            participationDAO.enregistrerParticipation(user.getEmail(), eventId, instrument, statut);
-            System.out.println("Participation enregistrée pour " + user.getEmail());
+            if ("desinscrire".equals(action)) {
+                participationDAO.supprimerParticipation(user.getEmail(), eventId);
+                System.out.println("Participation supprimée pour " + user.getEmail());
+            } else {
+                String instrument = req.getParameter("instrument");
+                String statut = req.getParameter("statut");
+                participationDAO.enregistrerParticipation(user.getEmail(), eventId, instrument, statut);
+                System.out.println("Participation enregistrée pour " + user.getEmail());
+            }
             resp.sendRedirect("evenement?id=" + eventId);
         } catch (Exception e) {
             e.printStackTrace();
