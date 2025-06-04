@@ -26,6 +26,17 @@
 <main class="container my-5">
   <h2 class="mb-4">Mes événements</h2>
 
+  <!-- Filtre de participation -->
+  <form method="get" action="events" class="mb-3">
+    <label for="filtreParticipation" class="form-label">Filtrer par :</label>
+    <select name="filtreParticipation" id="filtreParticipation" class="form-select w-auto d-inline-block">
+      <option value="tous">Tous les événements</option>
+      <option value="participe">Où je participe</option>
+      <option value="nonParticipe">Où je ne participe pas</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Filtrer</button>
+  </form>
+
   <% if (estPrestation) { %>
   <!-- Formulaire d'ajout/modification -->
   <form method="post" action="events" class="mb-4">
@@ -82,15 +93,8 @@
       <td><%= e.getDuree() %> min</td>
       <td><%= e.getLieu() %></td>
       <td><%= e.getDescription() %></td>
-      <td>
-        <%= (mesInstruments != null && mesInstruments.get(e.getId()) != null)
-                ? mesInstruments.get(e.getId()) : "" %>
-      </td>
-
-      <td>
-        <%= (mesStatuts != null && mesStatuts.get(e.getId()) != null)
-                ? mesStatuts.get(e.getId()) : "" %>
-      </td>
+      <td><%= mesInstruments.getOrDefault(e.getId(), "") %></td>
+      <td><%= mesStatuts.getOrDefault(e.getId(), "") %></td>
       <td>
         <% if (estPrestation) { %>
         <form method="post" action="events" class="d-inline">
@@ -109,9 +113,7 @@
     </tr>
     <%   }
     } else { %>
-    <tr>
-      <td colspan="8" class="text-center text-muted">Aucun événement trouvé.</td>
-    </tr>
+    <tr><td colspan="8" class="text-center text-muted">Aucun événement trouvé.</td></tr>
     <% } %>
     </tbody>
   </table>

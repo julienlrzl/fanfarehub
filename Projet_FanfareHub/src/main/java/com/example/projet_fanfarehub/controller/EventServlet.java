@@ -13,9 +13,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet("/events")
 public class EventServlet extends HttpServlet {
@@ -37,7 +35,6 @@ public class EventServlet extends HttpServlet {
 
         List<Event> events = dao.getTousLesEvenements();
 
-        // Récupération des instruments et statuts de l’utilisateur connecté pour chaque événement
         ParticipationDAO participationDAO = new ParticipationDAO();
         Map<Integer, String> mesInstruments = new HashMap<>();
         Map<Integer, String> mesStatuts = new HashMap<>();
@@ -47,6 +44,21 @@ public class EventServlet extends HttpServlet {
             String statut = participationDAO.getStatut(utilisateur.getEmail(), e.getId());
             mesInstruments.put(e.getId(), instrument != null ? instrument : "");
             mesStatuts.put(e.getId(), statut != null ? statut : "");
+        }
+
+        // Filtre “participe / ne participe pas”
+        String filtre = req.getParameter("filtreParticipation");
+        if (filtre != null && !"tous".equals(filtre)) {
+            Iterator<Event> iterator = events.iterator();
+            while (iterator.hasNext()) {
+                Event e = iterator.next();
+                boolean estInscrit = mesStatuts.get(e.getId()) != null && !mesStatuts.get(e.getId()).isEmpty();
+                if ("participe".equals(filtre) && !estInscrit) {
+                    iterator.remove();
+                } else if ("nonParticipe".equals(filtre) && estInscrit) {
+                    iterator.remove();
+                }
+            }
         }
 
         req.setAttribute("events", events);

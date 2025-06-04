@@ -2,7 +2,6 @@
 <%@ page import="com.example.projet_fanfarehub.model.Utilisateur" %>
 <%@ page import="com.example.projet_fanfarehub.dao.GroupDAO" %>
 <%@ page import="com.example.projet_fanfarehub.util.HtmlUtils" %> <!-- Ajout de l'import pour HtmlUtils -->
-<%@ page import="java.util.List" %>
 
 <%
   Utilisateur utilisateur = (Utilisateur) session.getAttribute("utilisateur");

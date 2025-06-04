@@ -1,4 +1,4 @@
-<%@ page import="java.util.*, com.example.projet_fanfarehub.model.Utilisateur, com.example.projet_fanfarehub.dao.UtilisateurDAO" %>
+<%@ page import="java.util.*, com.example.projet_fanfarehub.model.Utilisateur, com.example.projet_fanfarehub.dao.UtilisateurDAO, com.example.projet_fanfarehub.util.HtmlUtils" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <%
@@ -9,7 +9,7 @@
   }
 
   UtilisateurDAO dao = new UtilisateurDAO();
-  List<Utilisateur> utilisateurs = dao.listerTous(); // méthode à créer
+  List<Utilisateur> utilisateurs = dao.listerTous();
 %>
 
 <!DOCTYPE html>
@@ -43,9 +43,9 @@
           boolean estAdmin = u.isAdmin();
       %>
       <tr>
-        <td><%= u.getEmail() %></td>
-        <td><%= u.getPrenom() %></td>
-        <td><%= u.getNom() %></td>
+        <td><%= HtmlUtils.cleanInput(u.getEmail()) %></td>
+        <td><%= HtmlUtils.cleanInput(u.getPrenom()) %></td>
+        <td><%= HtmlUtils.cleanInput(u.getNom()) %></td>
         <td class="text-center">
           <% if (estAdmin) { %>
           <span class="text-success fw-semibold">Oui</span>
@@ -56,7 +56,7 @@
         <td class="text-end">
           <!-- Supprimer -->
           <form action="admin-action" method="post" class="d-inline">
-            <input type="hidden" name="email" value="<%= u.getEmail() %>">
+            <input type="hidden" name="email" value="<%= HtmlUtils.cleanInput(u.getEmail()) %>">
             <input type="hidden" name="action" value="delete">
             <button type="submit" class="btn btn-outline-danger btn-sm me-2" title="Supprimer"
                     onclick="return confirm('Supprimer cet utilisateur ?')">Supprimer
@@ -65,7 +65,7 @@
 
           <!-- Toggle Admin -->
           <form action="admin-action" method="post" class="d-inline">
-            <input type="hidden" name="email" value="<%= u.getEmail() %>">
+            <input type="hidden" name="email" value="<%= HtmlUtils.cleanInput(u.getEmail()) %>">
             <input type="hidden" name="action" value="toggleAdmin">
             <button type="submit" class="btn btn-warning btn-sm">
               <%= estAdmin ? "Retirer Admin" : "Donner Admin" %>

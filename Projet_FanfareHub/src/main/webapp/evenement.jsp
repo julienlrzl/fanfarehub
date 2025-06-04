@@ -4,6 +4,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="com.example.projet_fanfarehub.model.Utilisateur" %>
+<%@ page import="com.example.projet_fanfarehub.util.HtmlUtils" %>
 
 <%
   Event event = (Event) request.getAttribute("event");
@@ -27,12 +28,12 @@
 <jsp:include page="components/navbar.jsp" />
 
 <main class="container my-5">
-  <h2 class="mb-4">Participation à : <%= event.getNom() %></h2>
+  <h2 class="mb-4">Participation à : <%= HtmlUtils.cleanInput(event.getNom()) %></h2>
 
   <p><strong>Date :</strong> <%= sdf.format(event.getDatetime()) %></p>
   <p><strong>Durée :</strong> <%= event.getDuree() %> min</p>
-  <p><strong>Lieu :</strong> <%= event.getLieu() %></p>
-  <p><strong>Description :</strong> <%= event.getDescription() %></p>
+  <p><strong>Lieu :</strong> <%= HtmlUtils.cleanInput(event.getLieu()) %></p>
+  <p><strong>Description :</strong> <%= HtmlUtils.cleanInput(event.getDescription()) %></p>
 
   <form method="post" action="evenement">
     <input type="hidden" name="eventid" value="<%= event.getId() %>">
@@ -41,8 +42,9 @@
       <label class="form-label">Instrument</label>
       <select class="form-select" name="instrument" required>
         <% for (String inst : instruments) { %>
-        <option value="<%= inst %>" <%= inst.equals(instrumentChoisi) ? "selected" : "" %>>
-          <%= inst.substring(0, 1).toUpperCase() + inst.substring(1).replace("_", " ") %>
+        <option value="<%= HtmlUtils.cleanInput(inst) %>"
+                <%= inst.equals(instrumentChoisi) ? "selected" : "" %>>
+          <%= HtmlUtils.cleanInput(inst.substring(0, 1).toUpperCase() + inst.substring(1).replace("_", " ")) %>
         </option>
         <% } %>
       </select>
@@ -66,7 +68,7 @@
   <% if (participants != null && !participants.isEmpty()) { %>
   <% for (String instrument : participants.keySet()) { %>
   <h5 class="mt-4">
-    <%= instrument.substring(0, 1).toUpperCase() + instrument.substring(1).replace("_", " ") %>
+    <%= HtmlUtils.cleanInput(instrument.substring(0, 1).toUpperCase() + instrument.substring(1).replace("_", " ")) %>
   </h5>
   <div class="row">
     <% Map<String, List<String>> statutMap = participants.get(instrument); %>
@@ -74,13 +76,15 @@
     <div class="col-md-4">
       <div class="card mb-3">
         <div class="card-header bg-light">
-          <strong><%= statut.equals("present") ? "Présents" :
-                  (statut.equals("absent") ? "Absents" : "Incertains") %></strong>
+          <strong>
+            <%= "present".equals(statut) ? "Présents" :
+                    ("absent".equals(statut) ? "Absents" : "Incertains") %>
+          </strong>
         </div>
         <ul class="list-group list-group-flush">
           <% for (String nom : statutMap.get(statut)) { %>
           <li class="list-group-item d-flex justify-content-between align-items-center">
-            <%= nom %>
+            <%= HtmlUtils.cleanInput(nom) %>
             <% if ((utilisateur.getPrenom() + " " + utilisateur.getNom()).equals(nom)) { %>
             <form method="post" action="evenement" class="d-inline">
               <input type="hidden" name="eventid" value="<%= event.getId() %>">
