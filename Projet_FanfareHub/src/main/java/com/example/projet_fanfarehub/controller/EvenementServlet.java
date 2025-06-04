@@ -31,7 +31,7 @@ public class EvenementServlet extends HttpServlet {
         try {
             int eventId = Integer.parseInt(req.getParameter("id"));
             Event event = eventDAO.getById(eventId);
-            List<String> instruments = instrumentDAO.getAllSections();
+            List<String> instruments = instrumentDAO.getSectionsByEmail(user.getEmail());
             String instrument = participationDAO.getInstrument(user.getEmail(), eventId);
             String statut = participationDAO.getStatut(user.getEmail(), eventId);
 
